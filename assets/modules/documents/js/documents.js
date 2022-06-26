@@ -88,6 +88,47 @@ $(document).ready(function(){
         });
     });
 
+    // Fetch Notes Information
+    $(document).on('click','.updateNotes',function(){
+        file_id = $(this).data('id');
+        var data = sendAjax({ url: base_url + 'documents/getNotesInfo', data: { file_id: file_id}});
+        $('.form_updateNotes')[0].reset();
+        input('input[name="file_id"]', file_id);
+        input('textarea[name="file_notes"]', data.file_notes);
+    });
+
+    // Update User
+    $(document).on('submit','.form_updateNotes',function(e){
+        e.preventDefault();
+        var form_data = new FormData($('.form_updateNotes')[0]);
+        confirm_swal('Are you sure you want to update this Note?', 'Update').then(function (val) {
+            
+            if (val === true) {
+                const sendAjaxVar = sendAjax({
+                    url: base_url + 'documents/updateNotes',
+                    data: form_data
+                }, false);
+                if (sendAjaxVar) {
+                    clearError();
+                    if (sendAjaxVar.status == "success") {
+                        swal(sendAjaxVar.msg, sendAjaxVar.status);
+                        $('.form_updateNotes')[0].reset();
+                        if(method != 'scanbarcode') {
+                            documentTable();
+                        }
+                        $('#modal_updateNotes').modal('toggle');
+                    } else {
+                        $.each(sendAjaxVar, function (key, value) {
+                            $('input[name="' + key + '"]').next('.err').html(value);
+                            $('textarea[name="' + key + '"]').next('.err').html(value);
+                            $('select[name="' + key + '"]').next('.err').html(value);
+                        });
+                    }
+                }
+            }
+        });
+    });
+
     $(document).on('click', '.barcodeImage', function(e) {
         e.preventDefault();
         var barcode = $(this).data('barpath');
@@ -207,9 +248,14 @@ $(document).ready(function(){
             html += `<div class="col-md-12">
                 <div class="form-group">
                 <a href="`+base_url+data.file_path+`" target="_blank"><img src="`+base_url+`/assets/build/images/avatar.gif" class="scanImage"></a>
+                <label for="scanDivision" class="control-label">Division</label>
                 <p class="scanDivision">`+data.file_division+`</p>
+                <label for="scanType" class="control-label">Category</label>
                 <p class="scanType">`+data.file_type+`</p>
+                <label for="scanTitle" class="control-label">Title</label>
                 <p class="scanTitle">`+data.file_name+`</p>
+                <label for="scanNotes" class="control-label">Notes</label>
+                <p class="scanNotes">`+data.file_notes+`</p>
                 </div>
             </div>`;
         } else {
@@ -239,12 +285,14 @@ function documentTable(division = 'All', category = '') {
             { "data": "file_name", "width":"20%"},
             { "data": "file_division", "width":"10%"},
             { "data": "file_type", "width":"10%" },
+            { "data": "file_notes", "width":"20%" },
             { "data": "date_added", "width":"10%" },
             {
                 "data": "file_id", "width":"25%", "render": function (data, type, row, meta) {
                     var str = '';
                         str += '<a href="javascript:void(0);" data-barpath="'+base_url+row.barcode_path+'" class="btn btn-sm btn-outline-success barcodeImage" title="Click to View Barcode"><i class="fa fa-eye"></i> Barcode</a>&nbsp;';
                         str += '<a href="'+base_url+row.file_path+'" target="_blank" class="btn btn-sm btn-outline-success downloadDoc" title="Click to download"><i class="fa fa-download"></i> Download</a>&nbsp;';
+                        str += '<button data-toggle="modal" data-target="#modal_updateNotes" data-id="'+row.file_id+'" class="btn btn-sm btn-outline-warning updateNotes" title="Click to updae notes"><i class="fa fa-file"></i> Notes</button>&nbsp;';
                         // str += '<button data-toggle="modal" data-target="#modal_updateDocument" data-id="'+row.file_id+'" class="btn btn-sm btn-outline-warning updateDocument" title="Click to update"><i class="fa fa-edit"></i> Edit</button>&nbsp;';
                         str += '<button data-id="'+row.file_id+'" data-path="'+row.file_path+'" data-barpath="'+row.barcode_path+'" class="btn btn-sm btn-outline-danger removeDocument" title="Click to remove"><i class="fa fa-times-circle"></i> Remove</button>';
                     return str;
@@ -261,7 +309,7 @@ function documentTable(division = 'All', category = '') {
         //Set column definition initialisation properties.
         "columnDefs": [
             {
-                "targets": [4], //first column / numbering column
+                "targets": [5], //first column / numbering column
                 "orderable": false, //set not orderable
             },
         ],

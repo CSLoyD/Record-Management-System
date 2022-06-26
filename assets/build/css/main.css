@@ -2574,22 +2574,14 @@ fieldset:disabled a.btn {
   pointer-events: none;
 }
 
-.btn-primary {
-  color: #fff;
-  background-color: #245dc7;
-  border-color: #245dc7;
-}
+.btn-primary {color: #fff; background-color: #232f41; border: 1px solid #fff; padding: 10px 20px; border-radius: 50px;}
 
-.btn-primary:hover {
-  color: #fff;
-  background-color: #0F48AF;
-  border-color: #0F48AF;
-}
+.btn-primary:hover {color: #232f41; background-color: #fff; border-color: #232f41; box-shadow: unset !important;}
 
-.btn-primary:focus, .btn-primary.focus {
+/* .btn-primary:focus, .btn-primary.focus {
   -webkit-box-shadow: 0 0 0 0 rgba(0, 150, 136, 0.5);
           box-shadow: 0 0 0 0 rgba(0, 150, 136, 0.5);
-}
+} */
 
 .btn-primary.disabled, .btn-primary:disabled {
   color: #FFF;
@@ -13520,7 +13512,7 @@ be a descendant of the grid when it is being dragged.
   -webkit-transition: margin-left 0.3s ease;
   -o-transition: margin-left 0.3s ease;
   transition: margin-left 0.3s ease;
-  background: linear-gradient(198deg,#e2930036 -163%,#eede8021 -109%,#f3e7884f -60%,#e293001c -21%,#efe18245 40%,#e293003b 107%);
+  background: #fff;
 }
 
 @media (min-width: 768px) {
@@ -13573,7 +13565,7 @@ be a descendant of the grid when it is being dragged.
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  background-color: #ffffff;
+  background: linear-gradient(to left,#cfd33d,#44aec2);
   z-index: 1030;
   padding-right: 15px;
   color: #000;
@@ -13610,8 +13602,7 @@ be a descendant of the grid when it is being dragged.
         -ms-flex: 0 0 auto;
             flex: 0 0 auto;
     display: block;
-    width: 230px;
-    background-color: #ffffff;
+    width: 230px;   
     color: #000;
   }
 }
@@ -13809,15 +13800,15 @@ be a descendant of the grid when it is being dragged.
   width: 230px;
   overflow: auto;
   z-index: 10;
-  background-color: #ffffff;
-  /* -webkit-box-shadow: 0px 8px 17px rgba(0, 0, 0, 0.2);
+  background: #232f41;
+  -webkit-box-shadow: 0px 8px 17px rgba(0, 0, 0, 0.2);
           box-shadow: 0px 8px 17px rgba(0, 0, 0, 0.2);
   -webkit-transition: left 0.3s ease,
  width 0.3s ease;
   -o-transition: left 0.3s ease,
  width 0.3s ease;
   transition: left 0.3s ease,
- width 0.3s ease; */
+ width 0.3s ease;
 }
 
 .app-sidebar::-webkit-scrollbar {
@@ -13900,21 +13891,18 @@ be a descendant of the grid when it is being dragged.
  background-color 0.3s ease;
   transition: border-left-color 0.3s ease,
  background-color 0.3s ease;
-  color: #000;
+ color: #00e6ff;
 }
 
 .app-menu__item.active, .app-menu__item:focus {
-  background: linear-gradient(198deg,#e2930036 -163%,#eede8021 -109%,#f3e7884f -60%,#e293001c -21%,#efe18245 40%,#e293003b 107%);
-  border-left-color: #000;
+  border-left-color: #cfd33d;
   text-decoration: none;
-  color: #fff;
+  color: #fff !important;;
+  background: linear-gradient(to left,#84bf84,#fff0);
+
 }
-.app-menu__item:hover {
-  background: linear-gradient(198deg,#e29300 -163%,#eede80 -109%,#f3e788 -60%,#e29300 -21%,#efe182 40%,#e29300 107%);
-  border-left-color: #000;
-  text-decoration: none;
-  color: #fff;
-}
+.app-menu__item:hover {background: #44aec2; border-left-color: #fefefe; text-decoration: none; color: #232f41 !important;}
+
 
 .app-menu__icon {
   -webkit-box-flex: 0;
@@ -14122,7 +14110,7 @@ be a descendant of the grid when it is being dragged.
   -webkit-box-direction: normal;
       -ms-flex-direction: row;
           flex-direction: row;
-  background: linear-gradient(198deg,#e2930036 -163%,#eede8021 -109%,#f3e7884f -60%,#e293001c -21%,#efe18245 40%,#e293003b 107%);
+  
   margin: 0 -30px 30px;
   padding: 15px 30px;
   /* -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
@@ -14153,7 +14141,7 @@ be a descendant of the grid when it is being dragged.
   margin: 0;
   font-size: 30px;
   font-weight: 400;
-  color: #000;
+  color: #232f41;
   text-transform: uppercase;
 }
 

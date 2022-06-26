@@ -28,7 +28,7 @@ class Documents extends MY_Controller {
 		$division = $this->input->post('division');
 		$category = $this->input->post('category');
 
-		$select = "files.file_id, files.file_name, files.file_division, files.file_type, files.file_path, files.barcode, files.date_added, bc.barcode_path, bc.barcode_id";
+		$select = "files.file_id, files.file_name, files.file_division, files.file_type, files.file_notes, files.file_path, files.barcode, files.date_added, bc.barcode_path, bc.barcode_id";
 		$column_order = array('file_name','file_type');
 		$join = array('rms_barcodes as bc' => 'bc.fk_file_id = files.file_id');
 		$where = "file_status = 1";
@@ -71,6 +71,7 @@ class Documents extends MY_Controller {
 			$title			= trim($this->input->post('title'));
 			$division		= trim($this->input->post('division'));
 			$category		= trim($this->input->post('category'));
+			$file_notes		= trim($this->input->post('file_notes'));
 
 			if ($category == 'Reports') {
 				$reports = trim($this->input->post('reports'));
@@ -80,6 +81,9 @@ class Documents extends MY_Controller {
 				} else {
 					$category = $category.' - '.$reports;
 				}
+			}
+			if (empty($file_notes)) {
+				unset($_POST['file_notes']);
 			}
 
 			$codequery = 1;
@@ -132,6 +136,9 @@ class Documents extends MY_Controller {
 							'file_type'     	=> $category,
 							'barcode'     		=> $code,
 						);
+
+						$data['file_notes'] = (!empty($file_notes)) ? $file_notes : '-' ;
+
 						$query = insert('rms_files',$data);
 						if ($query) {
 							$barcodeData = array(
@@ -189,11 +196,72 @@ class Documents extends MY_Controller {
 	public function fetchBarcodeScan() {
 		$barcode = trim($this->input->post('barcode'));
 
-		$data['select'] = "file.file_id,file.file_path,file.file_name,file.file_division,file.file_type";
+		$data['select'] = "file.file_id,file.file_path,file.file_name,file.file_division,file.file_type, file.file_notes";
 		$data['join']	= array('rms_barcodes as br' => 'br.fk_file_id = file.file_id');
 		$data['where']	= "file.barcode = '$barcode'";
 		$query = getrow('rms_files as file',$data,'row');
 		json($query);
+	}
+
+	// Fetch Notes Information
+	public function getNotesInfo(){
+		$file_id = $_POST['file_id'];
+		$parameters['select']	= "file_notes";
+		$parameters['where']	= array('file_id' => $file_id);
+		$data = getrow('rms_files', $parameters, 'row');
+		json($data);
+	}
+
+	public function updateNotes() {
+		$respond = array();
+        if (isset($_POST)) {
+			$ctr = 0;
+
+			$file_id	= trim($this->input->post('file_id'));
+			$file_notes	= trim($this->input->post('file_notes'));
+
+			if (empty($file_notes)) {
+				unset($_POST['file_notes']);
+			}
+
+			foreach ($_POST as $key => $value) {
+				$name = ucfirst(str_replace('_', ' ', $key));
+				$this->form_validation->set_rules($key, $name, 'trim|required', array('required' => '{field} is required'));
+				if (!$this->form_validation->run()) {
+					if ($value == '') {
+						$respond[$key] = form_error($key);
+						$ctr += 1;
+					}
+				}
+			}
+			if ($ctr == 0) {
+				$saveNotesData = array(
+					'set'	=> array(),
+					'where' => "file_id = '$file_id'",
+				);
+
+				if (!empty($file_notes)) {
+					$saveNotesData['set']['file_notes'] = $file_notes;
+				} else {
+					$saveNotesData['set']['file_notes'] = '-';
+				}
+
+				$fetchData['select'] = "file_name";
+				$fetchData['where'] = "file_id = '$file_id'";
+				$fetch = getrow('rms_files',$fetchData,'row');
+
+				$saveNotes = update('rms_files',$saveNotesData['set'],$saveNotesData['where']);
+				if($saveNotes) {
+					$this->saveLogs("update notes on '{$fetch->file_name}' Document");
+					$respond['status'] = "success";
+					$respond['msg'] = "User updated Successfully";
+				} else {
+					$respond['status'] = "error";
+					$respond['msg'] = "Something went wrong";
+				}
+			} // End of ctr
+			json($respond);
+		}
 	}
 
 } // End of Class
